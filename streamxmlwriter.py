@@ -139,7 +139,7 @@ class XMLSyntaxError(Exception):
 
 class XMLWriter(object):
     """Stream XML writer"""
-    def __init__(self, file, encoding="utf-8",
+    def __init__(self, file, encoding="utf-8", xml_version = "1.0",
                  pretty_print=False, sort=True, abbrev_empty=True):
         """
         Create an `XMLWriter` that writes its output to `file`.
@@ -168,6 +168,7 @@ class XMLWriter(object):
         """
         self.write = file.write
         self.encoding = encoding
+        self.xml_version = xml_version
         self._pretty_print = pretty_print
         self._sort = sort
         if isinstance(sort, dict):
@@ -180,8 +181,7 @@ class XMLWriter(object):
         self._new_namespaces = {}
         self._started = False
         self._wrote_declaration = False
-        if self.encoding not in ("us-ascii", "utf-8"):
-            self.declaration()
+        self.declaration()
         self._wrote_data = False
 
     def start(self, tag, attributes=None, nsmap=None, **kwargs):
@@ -330,7 +330,7 @@ class XMLWriter(object):
             raise XMLSyntaxError("Can't write XML declaration after"
                                  " root element has been started.")
         if not self._wrote_declaration:
-            self.pi("xml", "version='1.0' encoding='" + self.encoding + "'")
+            self.pi("xml", "version='"+ self.xml_version +"' encoding='" + self.encoding + "'")
             self._wrote_declaration = True
     xml = declaration
 
